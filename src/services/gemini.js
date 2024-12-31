@@ -1,61 +1,81 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { cacheService } from '../utils/cache';
 
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 
-export const generateFlowchart = async (prompt) => {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const cleanMermaidCode = (response) => {
+  // Remove code block markers and trim
+  let cleaned = response
+    .replace(/```mermaid\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
+  
+  // Ensure proper line endings
+  cleaned = cleaned.replace(/\r\n/g, '\n');
+  
+  // Remove any leading whitespace from each line
+  cleaned = cleaned.split('\n')
+    .map(line => line.trim())
+    .join('\n');
     
-    const systemPrompt = `You are a flowchart generator. Generate a properly formatted Mermaid flowchart with these rules:
-      1. Start with 'graph TD'
-      2. Each node and connection MUST be on a new line
-      3. Use proper syntax:
-         - Regular nodes: A[Text without special characters]
-         - Decision nodes: B{Question without special characters?}
-         - Connections: A --> B
-         - Conditional paths: A -->|condition| B
-      4. Avoid using parentheses () in node text
-      5. Use simple alphanumeric characters for node text
-      6. Keep node names short and descriptive
-      
-      Example of correct formatting:
-      graph TD
-        A[Start] --> B{Decision}
-        B -->|yes| C[Process]
-        B -->|no| D[Alternative]
-        C --> E[End]
-        D --> E[End]
+  return cleaned;
+};
 
-      Return ONLY the clean Mermaid code with proper line breaks.`;
+const validateMermaidSyntax = (code, type) => {
+  const typePatterns = {
+    flowchart: /^flowchart\s+(LR|TD|BT|RL)/,
+    sequence: /^sequenceDiagram/,
+    erd: /^erDiagram/
+  };
 
-    const fullPrompt = `${systemPrompt}\n\nUser request: ${prompt}`;
-    
-    const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    let code = response.text()
-      .replace(/```mermaid\n?/g, '')
-      .replace(/```\n?/g, '')
-      .trim();
-    
-    // Clean up the code
-    code = code.split('\n')
-      .map(line => line.trim())
-      .filter(line => line)
-      .map(line => {
-        // Remove parentheses and special characters from node text
-        return line.replace(/\((.*?)\)/g, '')
-                  .replace(/[^\w\s\[\]{}>|-]/g, '');
-      })
-      .join('\n');
-    
-    // Ensure proper line break after graph TD
-    if (!code.startsWith('graph TD\n')) {
-      code = 'graph TD\n' + code;
-    }
-    
-    return code;
-  } catch (error) {
-    console.error('Error generating flowchart:', error);
-    throw error;
+  const pattern = typePatterns[type];
+  if (!pattern || !pattern.test(code)) {
+    throw new Error(`Invalid ${type} diagram syntax`);
   }
-}; 
+  return true;
+};
+
+const getPromptTemplate = (type, text) => {
+  const templates = {
+    flowchart: `Create a Mermaid.js flowchart. Description: "${text}".
+      Rules:
+      1. Start with exactly 'flowchart LR' or 'flowchart TD'
+      2. Use proper syntax: nodeId[Label] --> nodeId2[Label2]
+      3. No markdown code blocks
+      4. No extra text
+      5. Return only valid Mermaid.js code`,
+    sequence: `Create a Mermaid.js sequence diagram based on this description: "${text}".
+      Requirements:
+      - Start with 'sequenceDiagram'
+      - Define all participants
+      - Show clear message flows with arrows
+      - Include activations where relevant
+      - Add notes where helpful
+      Output only the Mermaid.js code without any additional text or formatting.`,
+    
+    // ... other templates following same pattern
+  };
+  
+  return templates[type] || templates.flowchart;
+};
+
+export const generateFlowchart = async (text, type = 'flowchart') => {
+  try {
+    const cacheKey = `${type}-${text}`;
+    const cachedResult = cacheService.get(cacheKey);
+    if (cachedResult) return cachedResult;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const result = await model.generateContent(getPromptTemplate(type, text));
+    const response = result.response.text();
+    
+    const cleanedCode = cleanMermaidCode(response);
+    validateMermaidSyntax(cleanedCode, type);
+    
+    cacheService.set(cacheKey, cleanedCode);
+    return cleanedCode;
+  } catch (error) {
+    console.error('Error generating diagram:', error);
+    throw new Error(`Failed to generate ${type} diagram: ${error.message}`);
+  }
+};
