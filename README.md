@@ -1,70 +1,122 @@
-# Getting Started with Create React App
+# Flow.AI - AI-Powered Diagram Generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based application that leverages Google's Gemini AI to generate Mermaid.js diagrams from natural language descriptions.
 
-## Available Scripts
+## Architecture
 
-In the project directory, you can run:
+```mermaid
+flowchart TD
+    A[User Input] --> B[React Frontend]
+    B --> C{Diagram Type}
+    C --> D[Gemini AI API]
+    D --> E[Mermaid Renderer]
+    E --> F[Generated Diagram]
+    
+    subgraph Performance Optimizations
+        G[Local Storage Cache]
+        H[Lazy Loading]
+        I[Debouncing]
+        J[Memoization]
+    end
+```
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### **Transform Natural Language into Diagrams**
+Effortlessly convert your ideas into structured diagrams using simple natural language prompts.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### **Supported Diagram Types**
+Unlock the power of visualization with support for a wide range of diagram types:
 
-### `npm test`
+- **Flowcharts**: Visualize workflows and processes with ease.  
+- **Sequence Diagrams**: Depict the interaction between objects over time.  
+- **Class Diagrams**: Showcase object-oriented structures for better understanding.  
+- **Entity Relationship Diagrams (ERD)**: Represent database schemas and relationships.  
+- **State Diagrams**: Track transitions between states in a system.  
+- **Gantt Charts**: Plan and visualize project timelines effectively.  
+- **Pie Charts**: Illustrate proportions in an engaging, circular format.  
+- **User Journey Diagrams**: Map the user experience through various stages.  
+- **Git Graphs**: Understand branching and merging in Git repositories.  
+- **C4 Diagrams**: Model software architecture at multiple abstraction levels.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
 
-### `npm run build`
+- <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React" width="40" height="40" style="vertical-align: middle;"> **React 18**  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- <img src="https://cdn.worldvectorlogo.com/logos/framer-motion.svg" alt="Framer Motion" width="40" height="40" style="vertical-align: middle;"> **Framer Motion**  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+- <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" alt="TailwindCSS" width="40" height="40" style="vertical-align: middle;"> **TailwindCSS**  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- <img src="https://static1.xdaimages.com/wordpress/wp-content/uploads/2024/02/google-gemini-ai-icon.png" alt="Google Gemini AI" width="40" height="40" style="vertical-align: middle;"> **Google Gemini AI**  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- <img src="https://mermaid.live/favicon.svg" alt="Mermaid.js" width="40" height="40" style="vertical-align: middle;"> **Mermaid.js**  
 
-## Learn More
+## Performance Optimizations
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Caching System
+The application incorporates a robust caching system designed to improve performance and reduce unnecessary API calls. By utilizing local storage, frequently used data is saved directly in the user's browser, ensuring faster retrieval during subsequent visits. To maintain data freshness and prevent stale information, cache invalidation is implemented, automatically clearing or updating stored data after 24 hours. Additionally, request deduplication ensures that multiple identical requests made within a short timeframe are consolidated into a single API call, reducing server load and enhancing efficiency.
 
 ### Code Splitting
+Code splitting is employed to optimize the loading process by breaking the application into smaller chunks. Components are lazily loaded, meaning they are only fetched when required, reducing the initial load time. Dynamic imports allow the application to load specific parts of the codebase on demand, further minimizing unnecessary overhead. Route-based chunking divides the application into distinct chunks based on user navigation paths, ensuring that users download only the resources they need for the current route.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### State Management
+To ensure seamless and efficient application performance, advanced state management techniques are used. Memoized computations store the results of expensive calculations and reuse them when the same inputs occur, saving processing power. API calls are debounced to prevent excessive requests during rapid user interactions, such as typing in a search field. Optimized re-renders ensure that only the necessary parts of the user interface update when data changes, enhancing responsiveness and conserving resources.
 
-### Analyzing the Bundle Size
+### Asset Optimization
+The application is designed with asset optimization techniques to enhance the user experience. Progressive loading ensures that content is loaded in stages, prioritizing critical elements to appear quickly while the rest loads in the background. Suspense boundaries are implemented to provide smooth transitions and handle asynchronous content gracefully, ensuring the UI remains responsive. Additionally, error boundaries catch and handle runtime errors effectively, preventing crashes and displaying fallback content to maintain a seamless user experience.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Installation
 
-### Making a Progressive Web App
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/yourusername/flow-ai.git
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+2. Navigate to the project directory:
 
-### Advanced Configuration
+    ```bash
+    cd flow-ai
+    ```
+3. Install dependencies:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    ```bash
+    npm install
+    ```
 
-### Deployment
+## Environment Configuration
+Create a .env file in the root of your project and add the required environment variables.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Contributing
 
-### `npm run build` fails to minify
+We welcome contributions to improve and expand this project! Follow these steps to contribute:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Fork the repository.
+2. Create your feature branch.
+3. Commit your changes.
+4. Push your changes to the branch.
+5. Submit a Pull Request for review.
+
+## License
+
+This project is licensed under the **MIT License**. For more information, see the [LICENSE](LICENSE) file.
+
+## Contact
+
+If you have any questions or feedback, feel free to reach out:
+
+- **GitHub**: [@kedarvartak](https://github.com/kedarvartak)
+- **Email**: [kedar.vartak22@vit.edu](mailto:kedar.vartak22@vit.edu)
+
+## Acknowledgments
+
+A special thanks to the following for their contributions and support:
+
+- **Google Gemini AI**: For its AI-driven capabilities.
+- **Mermaid.js**: For enabling seamless diagram generation.
+- **React Community**: For providing a robust framework and resources.
+
+
