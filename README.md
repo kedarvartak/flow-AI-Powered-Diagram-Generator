@@ -73,13 +73,13 @@ The application is designed with asset optimization techniques to enhance the us
 
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/yourusername/flow-ai.git
+   git clone https://github.com/yourusername/flow-AI-Powered-Diagram-Generator.git
    ```
 
 2. Navigate to the project directory:
 
     ```bash
-    cd flow-ai
+    cd flow-AI-Powered-Diagram-Generator
     ```
 3. Install dependencies:
 
